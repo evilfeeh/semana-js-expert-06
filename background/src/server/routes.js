@@ -2,7 +2,7 @@ import logger from '../utils/logs.js'
 import config from '../config.js'
 import { Controller } from '../controllers/service-controller.js'
 
-const { location, pages: { homeHTML, controllerHTML } } = config
+const { location, pages: { homeHTML, controllerHTML }, constants: { CONTENT_TYPE } } = config
 const controller = new Controller()
 
 async function routes (request, response) {
@@ -25,7 +25,12 @@ async function routes (request, response) {
 
   if (method === 'GET') {
     const { stream, type } = await controller.getFileStream(url)
-
+    const contentType = CONTENT_TYPE[type]
+    if (contentType) {
+      response.writeHead(200, {
+        'Content-type': contentType
+      })
+    }
     return stream.pipe(response)
   }
 
