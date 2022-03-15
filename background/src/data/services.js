@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { extname, join } from 'path'
 import fsPromises from 'fs/promises'
-import config from '../config'
+import config from '../config.js'
 
 const { dir: { publicDirectory } } = config
 
@@ -21,9 +21,10 @@ export class Service {
   }
 
   async getFileStream (file) {
-    const {} = await this.getFileInfo(file)
+    const { name, type } = await this.getFileInfo(file)
     return {
-      stream: this.createFileStream()
+      stream: this.createFileStream(name),
+      type
     }
   }
 }
