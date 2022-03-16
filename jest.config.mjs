@@ -36,7 +36,7 @@ export default {
       "public"
     ],
     testMatch: [
-      "**\\backend\\**\\tests\\**\\server\\**\\*.test.js"
+      "**\\tests\\**\\server\\**\\*.test.js"
     ]
   },
   {
@@ -51,7 +51,7 @@ export default {
       "public"
     ],
     testMatch: [
-      "**\\backend\\**\\tests\\**\\public\\**\\*.test.js"
+      "**\\tests\\**\\public\\**\\*.test.js"
     ]
   }]
 }
