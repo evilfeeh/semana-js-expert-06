@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals'
-
+import { Readable, Writable } from 'stream'
 export default class TestUtil {
   static generateReadableStream(data) {
     return new Readable({
@@ -31,7 +31,7 @@ export default class TestUtil {
         url : ''
       }),
       response: Object.assign(response, {
-        writeHeaders: jest.fn(),
+        writeHead: jest.fn(),
         end: jest.fn()
       })
     }
