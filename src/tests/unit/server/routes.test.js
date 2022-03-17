@@ -95,4 +95,31 @@ describe('Test server routes', () => {
     expect(mockFileStream.pipe).toHaveBeenCalledWith(params.response)
     expect(params.response.writeHead).toHaveBeenCalled()
   })
+
+  test('GET /file.ext - should response with file stream', async () => {
+    const params = TestUtil.defaultHandleParams()
+    const filename = 'file.ext'
+    params.request.method = 'GET'
+    params.request.url = `/${filename}`
+    const expectedType = '.ext'
+    const mockFileStream = TestUtil.generateReadableStream(['data'])
+    jest.spyOn(
+      Controller.prototype,
+      Controller.prototype.getFileStream.name
+    ).mockResolvedValue({
+      stream: mockFileStream,
+      type: expectedType
+    })
+  
+    jest.spyOn(
+      mockFileStream,
+      "pipe"
+    ).mockReturnValue()
+  
+    await handler(...params.values())
+  
+    expect(Controller.prototype.getFileStream).toBeCalledWith(params.request.url)
+    expect(mockFileStream.pipe).toHaveBeenCalledWith(params.response)
+    expect(params.response.writeHead).not.toHaveBeenCalled()
+  })
 })
