@@ -1,12 +1,25 @@
 import { describe, test, jest, expect } from '@jest/globals'
+import { handler } from '../../../server/routes.js'
+import config from '../../../config.js'
+import TestUtil from '../_util/testUtil.js'
+
+const { pages, location } = config
 
 describe('Test server routes', () => {
- test.todo('GET / - should return to home page')
- test.todo('GET /home - should response with home/index.js')
- test.todo('GET /controller - should response with controller/index.js')
- test.todo('GET /file.txt - should response with file stream')
- test.todo('GET /unknown - should return 404 page')
+  beforeEach(() => {
+    jest.restoreAllMocks()
+    jest.clearAllMocks()
+  })
 
- test.todo('should return a page with 404')
- test.todo('given an error it should respond with 500')
+  test('GET / - should return to home page', async () => {
+    const params = TestUtil.defaultHandleParams()
+    params.request.method = 'GET'
+    params.request.url = '/'
+
+    await handler(...params.values())
+
+    expect(params.response.writeHead).toBeCalledWith(302, { 'Location': location.home })
+    expect(params.response.end).toHaveBeenCalled()
+  })
+
 })
