@@ -34,7 +34,7 @@ async function routes (request, response) {
     return stream.pipe(response)
   }
 
-  response.writeHead(404, {'statusMessage': "something's wrong :v"})
+  response.writeHead(404)
   return response.end()
 }
 
