@@ -68,4 +68,31 @@ describe('Test server routes', () => {
     expect(Controller.prototype.getFileStream).toBeCalledWith(pages.controllerHTML)
     expect(mockFileStream.pipe).toHaveBeenCalledWith(params.response)
   })
+
+  test('GET /index.html - should response with file stream', async () => {
+    const params = TestUtil.defaultHandleParams()
+    const filename = 'index.html'
+    params.request.method = 'GET'
+    params.request.url = `/${filename}`
+    const expectedType = '.html'
+    const mockFileStream = TestUtil.generateReadableStream(['data'])
+    jest.spyOn(
+      Controller.prototype,
+      Controller.prototype.getFileStream.name
+    ).mockResolvedValue({
+      stream: mockFileStream,
+      type: expectedType
+    })
+  
+    jest.spyOn(
+      mockFileStream,
+      "pipe"
+    ).mockReturnValue()
+  
+    await handler(...params.values())
+  
+    expect(Controller.prototype.getFileStream).toBeCalledWith(params.request.url)
+    expect(mockFileStream.pipe).toHaveBeenCalledWith(params.response)
+    expect(params.response.writeHead).toHaveBeenCalled()
+  })
 })
