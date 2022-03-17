@@ -2,6 +2,7 @@ import { describe, test, jest, expect } from '@jest/globals'
 import { handler } from '../../../server/routes.js'
 import config from '../../../config.js'
 import TestUtil from '../_util/testUtil.js'
+import { Controller } from '../../../controllers/service-controller.js'
 
 const { pages, location } = config
 
@@ -22,4 +23,26 @@ describe('Test server routes', () => {
     expect(params.response.end).toHaveBeenCalled()
   })
 
+  test('GET /home - should response with home/index.js with stream', async () => {
+    const params = TestUtil.defaultHandleParams()
+    params.request.method = 'GET'
+    params.request.url = '/home'
+    const mockFileStream = TestUtil.generateReadableStream(['data'])
+    jest.spyOn(
+      Controller.prototype,
+      Controller.prototype.getFileStream.name
+    ).mockResolvedValue({
+      stream: mockFileStream
+    })
+  
+    jest.spyOn(
+      mockFileStream,
+      "pipe"
+    ).mockReturnValue()
+  
+    await handler(...params.values())
+  
+    expect(Controller.prototype.getFileStream).toBeCalledWith(pages.homeHTML)
+    expect(mockFileStream.pipe).toHaveBeenCalledWith(params.response)
+  })
 })
