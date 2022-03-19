@@ -23,6 +23,17 @@ async function routes (request, response) {
     return stream.pipe(response)
   }
 
+  if (method === 'GET' && url.includes('/stream')) {
+    const { stream, onClose } = controller.createClientStream()
+    request.once("close", onClose)
+    response.writeHead(200, {
+      'Content-Type': 'audio/mpeg',
+      'Accept-rages': 'bytes'
+    })
+
+    return stream.pipe(stream)
+  }
+
   if (method === 'GET') {
     const { stream, type } = await controller.getFileStream(url)
     const contentType = CONTENT_TYPE[type]
