@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "pino": "^7.8.1",
-    "pino-pretty": "^7.5.3"
+    "pino-pretty": "^7.5.3",
+    "throttle": "^1.0.3"
   }
 }
