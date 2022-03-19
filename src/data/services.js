@@ -4,8 +4,9 @@ import fsPromises from 'fs/promises'
 import config from '../config.js'
 import { randomUUID } from 'crypto'
 import { PassThrough } from 'stream'
+import childProcess from 'child_process'
 
-const { dir: { publicDirectory } } = config
+const { dir: { publicDirectory }, constants: { fallbackBitRate } } = config
 
 export class Service {
   constructor() {  
@@ -26,6 +27,35 @@ export class Service {
   removeClientStream(id) {
     this.clientStreams.delete(id)
   }
+
+  _executeSoxCommand(args) {
+    return childProcess.spawn('sox', args)
+  }
+
+  async getBitRate(song) {
+    try {
+      const args = [
+        '--i',
+        '-B',
+        song
+      ]
+
+      const { stderr, stdout } = this._executeSoxCommand(args)
+      const [ success, error ] = [ stdout, stderr ].map(stream => stream.read())
+
+      if (error) return await Promise.reject(error)
+
+      return success
+      .toString()
+      .trim()
+      .replace(/k/, '000')
+
+    } catch (error) {
+      logger.erro(`Error on get bitrate ${error}`)
+      return fallbackBitRate
+    }
+  }
+
 
   createFileStream(filename) {
     return fs.createReadStream(filename)
